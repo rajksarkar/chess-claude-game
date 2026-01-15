@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess vs Claude 4.5</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>♟️ Chess vs Claude 4.5</h1>
+        <div class="game-info">
+            <div class="status" id="status">You are White. Make your move!</div>
+            <button id="newGameBtn" class="btn">New Game</button>
+        </div>
+        <div class="board-container">
+            <div class="player-label player-label-top">Claude (Black) ↑</div>
+            <div id="board"></div>
+            <div class="player-label player-label-bottom">You (White) ↓</div>
+        </div>
+        <div class="info-panel">
+            <div class="move-history">
+                <h3>Move History</h3>
+                <div id="moveHistory"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/chess.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
