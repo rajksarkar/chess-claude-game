@@ -20,24 +20,10 @@ const anthropic = new Anthropic({
 // Store game states (in production, use a proper database)
 const games = new Map();
 
-// Serve chess.js as a browser-compatible bundle
+// chess.js is now served as a static file (chess-bundle.js) for better Vercel compatibility
+// This endpoint is kept as a fallback for backwards compatibility
 app.get('/chess.js', (req, res) => {
-  const chessCode = fs.readFileSync(path.join(__dirname, 'node_modules', 'chess.js', 'dist', 'cjs', 'chess.js'), 'utf8');
-  
-  // Wrap in UMD format for browser
-  const browserBundle = `
-(function() {
-  const module = { exports: {} };
-  const exports = module.exports;
-  ${chessCode}
-  if (typeof window !== 'undefined') {
-    window.Chess = module.exports.Chess;
-  }
-})();
-  `.trim();
-  
-  res.setHeader('Content-Type', 'application/javascript');
-  res.send(browserBundle);
+  res.redirect('/chess-bundle.js');
 });
 
 // Serve the main page
