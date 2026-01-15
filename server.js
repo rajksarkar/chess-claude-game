@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 
 // Initialize Claude client
 const anthropic = new Anthropic({
@@ -20,17 +19,20 @@ const anthropic = new Anthropic({
 // Store game states (in production, use a proper database)
 const games = new Map();
 
-// chess.js is now served as a static file (chess-bundle.js) for better Vercel compatibility
-// This endpoint is kept as a fallback for backwards compatibility
+// Serve static files FIRST - works in both local and Vercel
+// This must come before other routes to ensure static files are served
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath, {
+  maxAge: '1d', // Cache static files
+  etag: true
+}));
+
+// chess.js redirect - keep for backwards compatibility
 app.get('/chess.js', (req, res) => {
   res.redirect('/chess-bundle.js');
 });
 
-// Serve the main page
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
+// API routes
 // Create a new game
 app.post('/api/game/new', (req, res) => {
   const gameId = Date.now().toString();
@@ -71,6 +73,11 @@ app.post('/api/game/move', async (req, res) => {
     console.error('Error getting AI move:', error);
     res.status(500).json({ error: error.message });
   }
+});
+
+// Serve the main page - must be after API routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Get AI move using Claude
