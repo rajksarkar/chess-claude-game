@@ -157,7 +157,13 @@ Please analyze the position and choose the best move. Respond with ONLY the move
   }
 }
 
-app.listen(PORT, () => {
-  console.log(`Chess game server running on http://localhost:${PORT}`);
-  console.log('Make sure to set ANTHROPIC_API_KEY in your .env file');
-});
+// Export for Vercel serverless functions
+module.exports = app;
+
+// Only listen if running locally (not on Vercel)
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Chess game server running on http://localhost:${PORT}`);
+    console.log('Make sure to set ANTHROPIC_API_KEY in your .env file');
+  });
+}
