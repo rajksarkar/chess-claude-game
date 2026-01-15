@@ -108,7 +108,7 @@ Please analyze the position and choose the best move. Respond with ONLY the move
 
   try {
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
+      model: "claude-sonnet-4-5-20250929", // Claude 4.5 Sonnet
       max_tokens: 50,
       messages: [{
         role: "user",
