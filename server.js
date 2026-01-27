@@ -46,8 +46,8 @@ app.post('/api/game/new', (req, res) => {
 // Get AI move from Claude
 app.post('/api/game/move', async (req, res) => {
   try {
-    const { gameId, move, fen } = req.body;
-    
+    const { gameId, move, fen, model } = req.body;
+
     if (!gameId || !move || !fen) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -61,8 +61,8 @@ app.post('/api/game/move', async (req, res) => {
       games.set(gameId, { fen, history: [move] });
     }
 
-    // Get AI move from Claude
-    const aiMove = await getAIMove(fen);
+    // Get AI move from Claude with selected model
+    const aiMove = await getAIMove(fen, model);
     
     res.json({ 
       move: aiMove.move,
@@ -81,13 +81,13 @@ app.get('/', (req, res) => {
 });
 
 // Get AI move using Claude
-async function getAIMove(fen) {
+async function getAIMove(fen, model = "claude-sonnet-4-5-20250929") {
   const Chess = require('chess.js');
   const chess = new Chess.Chess(fen);
-  
+
   // Get all legal moves
   const legalMoves = chess.moves({ verbose: true });
-  
+
   if (legalMoves.length === 0) {
     return { move: null, fen: chess.fen(), gameOver: true };
   }
@@ -101,7 +101,7 @@ Please analyze the position and choose the best move. Respond with ONLY the move
 
   try {
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929", // Claude 4.5 Sonnet
+      model: model,
       max_tokens: 50,
       messages: [{
         role: "user",

@@ -145,10 +145,13 @@ function highlightSquare(squareElement) {
 async function handleMove(move) {
     updateStatus('Claude is thinking...', 'thinking');
     addMoveToHistory(move);
-    
+
     // Update board
     renderBoard();
-    
+
+    // Get selected model
+    const selectedModel = document.getElementById('modelSelect').value;
+
     // Send move to server and get AI response
     try {
         const response = await fetch('/api/game/move', {
@@ -159,7 +162,8 @@ async function handleMove(move) {
             body: JSON.stringify({
                 gameId: gameId,
                 move: move.san,
-                fen: chess.fen()
+                fen: chess.fen(),
+                model: selectedModel
             })
         });
         
